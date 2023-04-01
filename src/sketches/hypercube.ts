@@ -1,5 +1,6 @@
 import type { SketchSpec } from "../Sketch.svelte";
 import * as math from 'mathjs';
+import type P5 from "p5";
 
 type Vector3D = [number, number, number]
 type Vector4D = [number, number, number, number]
@@ -65,13 +66,15 @@ const edges = [
 
     // Connect cubes along w
     [p0000, p0001],
-    [p1000, p1001],
-    [p1100, p1101],
     [p0100, p0101],
     [p0010, p0011],
-    [p1010, p1011],
-    [p1110, p1111],
     [p0110, p0111],
+
+
+    [p1000, p1001],
+    [p1100, p1101],
+    [p1110, p1111],
+    [p1010, p1011],
 ]
 
 const lightPosW = SIZE
@@ -118,7 +121,7 @@ const rotate = (plane: Plane4D, angle: number, vector: Vector4D): Vector4D => {
 }
 
 /** Animation loop duration in sec */
-const PERIOD = 2
+const PERIOD = 5
 const TARGET_FPS = 60
 const TOTAL_FRAMES = PERIOD * TARGET_FPS
 
@@ -134,6 +137,8 @@ export const hypercube: SketchSpec = {
     },
     draw: (p5): void => {
         p5.background('#262626')
+        p5.noStroke()
+        p5.lights()
 
         edges.forEach(edge => {
             const [e0, e1] = edge
@@ -153,7 +158,60 @@ export const hypercube: SketchSpec = {
             const v0 = project(r0)
             const v1 = project(r1)
 
-            p5.line(...v0, ...v1)
+            cylindricalLine(p5, v0, v1, 10, 20)
         })
     },
+}
+
+
+const midpoint = (p0: Vector3D, p1: Vector3D): Vector3D => [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2, (p0[2] + p1[2]) / 2]
+
+const cylindricalLine = (p5: P5, p0: Vector3D, p1: Vector3D, edgeRadius: number, pointRadius: number): void => {
+    const m = midpoint(p0, p1)
+    const diff = math.subtract(p0, p1)
+    const length = math.norm(diff) as number
+
+    const { theta, phi } = cartesianToSpherical(diff)
+
+    // Cylinder
+    p5.push()
+    p5.translate(...m)
+    p5.rotateY(-theta)
+    p5.rotateZ(-phi)
+    p5.cylinder(edgeRadius, length)
+    p5.pop()
+
+    // Sphere endpoints
+    p5.push()
+    p5.translate(...p0)
+    p5.sphere(pointRadius)
+    p5.pop()
+    p5.push()
+    p5.translate(...p1)
+    p5.sphere(pointRadius)
+    p5.pop()
+}
+
+interface SphericalCoordinates {
+    r: number
+    theta: number
+    phi: number
+}
+const cartesianToSpherical = (point: Vector3D): SphericalCoordinates => {
+    const [x, y, z] = point
+    const r = math.norm(point) as number
+
+    let theta: number;
+    if (x === 0) theta = z > 0 ? Math.PI / 2 : -Math.PI / 2
+    else theta = math.atan(z / x)
+
+    let phi: number;
+    const xzMag = math.norm([x, z]) as number
+    if (y === 0) phi = xzMag > 0 ? Math.PI / 2 : -Math.PI / 2
+    else {
+        phi = math.atan(xzMag / y)
+        if (x < 0) phi *= -1
+    }
+
+    return { r, theta, phi }
 }

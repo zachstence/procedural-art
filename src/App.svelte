@@ -1,6 +1,6 @@
 <script lang="ts">
   import Sketch from "./Sketch.svelte";
-  import { cubeWithCylinderEdges } from "./sketches/cubeWithCylinderEdges";
+  import { hypercube } from "./sketches/hypercube";
 </script>
 
-<Sketch spec={cubeWithCylinderEdges} />
+<Sketch spec={hypercube} />
