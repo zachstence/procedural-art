@@ -3,18 +3,18 @@ import * as math from "mathjs";
 
 import type { SketchSpec } from "../Sketch.svelte";
 
-type Point = [number, number, number]
+type Vector3D = [number, number, number]
 
 const SIZE = 300
 
-const p000: Point = [SIZE / 2, SIZE / 2, SIZE / 2]
-const p001: Point = [SIZE / 2, SIZE / 2, -SIZE / 2]
-const p010: Point = [SIZE / 2, -SIZE / 2, SIZE / 2]
-const p011: Point = [SIZE / 2, -SIZE / 2, -SIZE / 2]
-const p100: Point = [-SIZE / 2, SIZE / 2, SIZE / 2]
-const p101: Point = [-SIZE / 2, SIZE / 2, -SIZE / 2]
-const p110: Point = [-SIZE / 2, -SIZE / 2, SIZE / 2]
-const p111: Point = [-SIZE / 2, -SIZE / 2, -SIZE / 2]
+const p000: Vector3D = [SIZE / 2, SIZE / 2, SIZE / 2]
+const p001: Vector3D = [SIZE / 2, SIZE / 2, -SIZE / 2]
+const p010: Vector3D = [SIZE / 2, -SIZE / 2, SIZE / 2]
+const p011: Vector3D = [SIZE / 2, -SIZE / 2, -SIZE / 2]
+const p100: Vector3D = [-SIZE / 2, SIZE / 2, SIZE / 2]
+const p101: Vector3D = [-SIZE / 2, SIZE / 2, -SIZE / 2]
+const p110: Vector3D = [-SIZE / 2, -SIZE / 2, SIZE / 2]
+const p111: Vector3D = [-SIZE / 2, -SIZE / 2, -SIZE / 2]
 
 export const cubeWithCylinderEdges: SketchSpec = {
     draw: p5 => {
@@ -45,9 +45,9 @@ export const cubeWithCylinderEdges: SketchSpec = {
     },
 }
 
-const midpoint = (p0: Point, p1: Point): Point => [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2, (p0[2] + p1[2]) / 2]
+const midpoint = (p0: Vector3D, p1: Vector3D): Vector3D => [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2, (p0[2] + p1[2]) / 2]
 
-const cylindricalLine = (p5: P5, p0: Point, p1: Point, edgeRadius: number, pointRadius: number): void => {
+const cylindricalLine = (p5: P5, p0: Vector3D, p1: Vector3D, edgeRadius: number, pointRadius: number): void => {
     const m = midpoint(p0, p1)
     const diff = math.subtract(p0, p1)
     const length = math.norm(diff) as number
@@ -78,7 +78,7 @@ interface SphericalCoordinates {
     theta: number
     phi: number
 }
-const cartesianToSpherical = (point: Point): SphericalCoordinates => {
+const cartesianToSpherical = (point: Vector3D): SphericalCoordinates => {
     const [x, y, z] = point
     const r = math.norm(point) as number
 
