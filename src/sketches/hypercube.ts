@@ -118,12 +118,13 @@ const rotate = (plane: Plane4D, angle: number, vector: Vector4D): Vector4D => {
 }
 
 export const hypercube: SketchSpec = {
-    setup: (p5): void => {
-        p5.noLoop()
+    // capture: true,
+    captureOptions: {
+        name: 'hypercube-webm',
+        numFrames: 3 * 60,
     },
     draw: (p5): void => {
         p5.background('#262626')
-
 
         edges.forEach(edge => {
             const [e0, e1] = edge

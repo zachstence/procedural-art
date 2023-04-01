@@ -12,8 +12,11 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.3",
     "@tsconfig/svelte": "^3.0.0",
+    "@types/ccapture.js": "^1.1.1",
     "@types/p5": "^1.6.0",
     "autoprefixer": "^10.4.7",
+    "canvas-capture": "^2.0.6",
+    "ccapture.js": "^1.1.0",
     "mathjs": "^11.7.0",
     "p5": "^1.6.0",
     "postcss": "^8.4.14",

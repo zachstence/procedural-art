@@ -1,5 +1,11 @@
 <script lang="ts" context="module">
+    export interface CaptureOptions extends Omit<CanvasCapture.WEBM_OPTIONS, 'format'> {
+        numFrames: number
+    }
+
     export type SketchSpec = {
+        capture?: boolean
+        captureOptions?: CaptureOptions
         setup?: (p5: P5, parent: HTMLElement) => void,
         draw?: (p5: P5) => void,
     };
@@ -9,19 +15,46 @@
     import P5 from "p5";
     import { onMount } from "svelte";
 
+    import { CanvasCapture } from "canvas-capture"
+
     export let spec: SketchSpec
 
     let parent: HTMLElement;
     let p5Instance: P5;
+    let capture: CanvasCapture.ACTIVE_CAPTURE | undefined
 
     onMount(() => {
         p5Instance = new P5((p5: P5) => {
             p5.setup = () => {
                 const canvas = p5.createCanvas(parent.clientWidth, parent.clientHeight, "webgl")
                 canvas.parent(parent)
+
+                if (spec.capture) {
+                    const canvasElm = parent.querySelector('canvas')
+                    CanvasCapture.init(canvasElm)
+                }
             }
 
-            p5.draw = () => spec.draw(p5)
+            p5.draw = () => {
+                if (spec.capture) {
+                    if (p5.frameCount === 1) {
+                        capture = CanvasCapture.beginVideoRecord({
+                            ...spec.captureOptions,
+                            format: 'webm',
+                        })
+                    }
+
+                    if (capture && p5.frameCount > spec.captureOptions.numFrames) {
+                        CanvasCapture.stopRecord(capture)
+                        capture = undefined
+                    }
+                }
+
+                spec.draw(p5)
+
+                CanvasCapture.checkHotkeys()
+                if (CanvasCapture.isRecording()) CanvasCapture.recordFrame()
+            }
         })
     })
 </script>
