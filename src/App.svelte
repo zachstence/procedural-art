@@ -1,3 +1,6 @@
 <script lang="ts">
-  import './sketches/Cube';
+  import Sketch from "./Sketch.svelte";
+  import { cube } from "./sketches/cube";
 </script>
+
+<Sketch spec={cube} />
