@@ -31,14 +31,4 @@
     p5Instance.resizeCanvas(event.currentTarget.innerWidth, event.currentTarget.innerHeight)
 }} />
 
-<div bind:this={parent} />
-
-
-<style>
-    div {
-        position: absolute;
-        inset: 0;
-        width: 100vw;
-        height: 100vh;
-    }
-</style>
+<div bind:this={parent} class="absolute inset-0" />
