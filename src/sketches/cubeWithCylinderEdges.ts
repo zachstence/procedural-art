@@ -58,7 +58,7 @@ const cylindricalLine = (p5: P5, p0: Vector3D, p1: Vector3D, edgeRadius: number,
     p5.push()
     p5.translate(...m)
     p5.rotateY(-theta)
-    p5.rotateZ(Math.PI - phi)
+    p5.rotateZ(-phi)
     p5.cylinder(edgeRadius, length)
     p5.pop()
 
@@ -83,12 +83,16 @@ const cartesianToSpherical = (point: Vector3D): SphericalCoordinates => {
     const r = math.norm(point) as number
 
     let theta: number;
-    if (x === 0) theta = Math.PI / 2
+    if (x === 0) theta = z > 0 ? Math.PI / 2 : -Math.PI / 2
     else theta = math.atan(z / x)
 
     let phi: number;
-    if (y === 0) phi = Math.PI / 2
-    else phi = math.atan(math.norm([x, z]) as number / y)
+    const xzMag = math.norm([x, z]) as number
+    if (y === 0) phi = xzMag > 0 ? Math.PI / 2 : -Math.PI / 2
+    else {
+        phi = math.atan(xzMag / y)
+        if (x < 0) phi *= -1
+    }
 
     return { r, theta, phi }
 }
