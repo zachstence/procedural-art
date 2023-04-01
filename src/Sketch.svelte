@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-    export interface CaptureOptions extends Omit<CanvasCapture.WEBM_OPTIONS, 'format'> {
+    export interface CaptureOptions extends Omit<CanvasCapture.GIF_OPTIONS, 'format'> {
         numFrames: number
     }
 
@@ -31,16 +31,18 @@
 
                 if (spec.capture) {
                     const canvasElm = parent.querySelector('canvas')
-                    CanvasCapture.init(canvasElm)
+                    CanvasCapture.init(canvasElm, { verbose: true })
                 }
             }
 
             p5.draw = () => {
                 if (spec.capture) {
                     if (p5.frameCount === 1) {
-                        capture = CanvasCapture.beginVideoRecord({
+                        capture = CanvasCapture.beginGIFRecord({
+                            onError: error => console.error(`Error recording GIF`, error),
+                            onExportProgress: progress => console.debug(`GIF export progress: ${progress}`),
+                            onExportFinish: () => console.log(`GIF export complete!`),
                             ...spec.captureOptions,
-                            format: 'webm',
                         })
                     }
 

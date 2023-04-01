@@ -117,11 +117,20 @@ const rotate = (plane: Plane4D, angle: number, vector: Vector4D): Vector4D => {
     return out.toArray() as Vector4D
 }
 
+/** Animation loop duration in sec */
+const PERIOD = 2
+const TARGET_FPS = 60
+const TOTAL_FRAMES = PERIOD * TARGET_FPS
+
 export const hypercube: SketchSpec = {
     // capture: true,
     captureOptions: {
         name: 'hypercube-webm',
-        numFrames: 3 * 60,
+        fps: TARGET_FPS,
+        numFrames: TOTAL_FRAMES,
+    },
+    setup: p5 => {
+        p5.frameRate(TARGET_FPS)
     },
     draw: (p5): void => {
         p5.background('#262626')
@@ -132,11 +141,14 @@ export const hypercube: SketchSpec = {
             let r0 = e0
             let r1 = e1
             
-            r0 = rotate("xz", p5.frameCount * 0.003, r0)
-            r1 = rotate("xz", p5.frameCount * 0.003, r1)
+            const percent = (p5.frameCount / TOTAL_FRAMES) % 1
+            const angle = percent * (Math.PI / 2)
+
+            r0 = rotate("xz", angle, r0)
+            r1 = rotate("xz", angle, r1)
             
-            r0 = rotate("yw", p5.frameCount * 0.003, r0)
-            r1 = rotate("yw", p5.frameCount * 0.003, r1)
+            r0 = rotate("yw", angle, r0)
+            r1 = rotate("yw", angle, r1)
 
             const v0 = project(r0)
             const v1 = project(r1)
@@ -145,4 +157,3 @@ export const hypercube: SketchSpec = {
         })
     },
 }
-
