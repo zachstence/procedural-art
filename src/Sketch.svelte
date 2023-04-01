@@ -17,7 +17,7 @@
     onMount(() => {
         p5Instance = new P5((p5: P5) => {
             p5.setup = () => {
-                const canvas = p5.createCanvas(500, 500, "webgl")
+                const canvas = p5.createCanvas(parent.clientWidth, parent.clientHeight, "webgl")
                 canvas.parent(parent)
             }
 
@@ -26,6 +26,10 @@
     })
 </script>
 
+
+<svelte:window on:resize={(event) => { 
+    p5Instance.resizeCanvas(event.currentTarget.innerWidth, event.currentTarget.innerHeight)
+}} />
 
 <div bind:this={parent} />
 
