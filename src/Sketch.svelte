@@ -52,7 +52,19 @@
                     }
                 }
 
+                p5.orbitControl(2, 2, 0.1)
+
                 spec.draw(p5)
+                
+                // Draw axes for debugging
+                // p5.push()
+                // p5.stroke('red')
+                // p5.line(0, 0, 0, 100, 0, 0)
+                // p5.stroke('green')
+                // p5.line(0, 0, 0, 0, 100, 0)
+                // p5.stroke('blue')
+                // p5.line(0, 0, 0, 0, 0, 100)
+                // p5.pop()
 
                 CanvasCapture.checkHotkeys()
                 if (CanvasCapture.isRecording()) CanvasCapture.recordFrame()
