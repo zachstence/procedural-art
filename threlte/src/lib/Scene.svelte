@@ -1,8 +1,32 @@
-<script>
+<script lang="ts">
 	import { Canvas, OrbitControls, T } from '@threlte/core'
-	import { spring } from 'svelte/motion'
+    import { BoxGeometry, BufferGeometry, EdgesGeometry, LineSegments, Vector3 } from 'three';
 
-	const scale = spring(1)
+    const SIZE = 1
+
+    const p000 = new Vector3(SIZE / 2, SIZE / 2, SIZE / 2)
+    const p001 = new Vector3(SIZE / 2, SIZE / 2, -SIZE / 2)
+    const p010 = new Vector3(SIZE / 2, -SIZE / 2, SIZE / 2)
+    const p011 = new Vector3(SIZE / 2, -SIZE / 2, -SIZE / 2)
+    const p100 = new Vector3(-SIZE / 2, SIZE / 2, SIZE / 2)
+    const p101 = new Vector3(-SIZE / 2, SIZE / 2, -SIZE / 2)
+    const p110 = new Vector3(-SIZE / 2, -SIZE / 2, SIZE / 2)
+    const p111 = new Vector3(-SIZE / 2, -SIZE / 2, -SIZE / 2)
+
+    const edges = [
+        [p000, p001],
+        [p001, p011],
+        [p011, p010],
+        [p010, p000],
+        [p100, p101],
+        [p101, p111],
+        [p111, p110],
+        [p110, p100],
+        [p000, p100],
+        [p001, p101],
+        [p011, p111],
+        [p010, p110],
+    ]
 </script>
 
 
@@ -15,13 +39,13 @@
     <T.DirectionalLight position={[-3, 10, -10]} intensity={0.2} />
     <T.AmbientLight intensity={0.2} />
 
-    <!-- Cube -->
-    <T.Group scale={$scale}>
-        <T.Mesh position.y={0.5} castShadow>
-            <T.BoxGeometry />
-            <T.MeshStandardMaterial color="#333333" />
-        </T.Mesh>
-    </T.Group>
+    <T.Mesh position.y={0.5} castShadow>
+        <T.MeshStandardMaterial color="#333333" />
+
+        {#each edges as edge}
+            <T.Line args={[new BufferGeometry().setFromPoints(edge)]}/>
+        {/each}
+    </T.Mesh>
 </Canvas>
 
 
