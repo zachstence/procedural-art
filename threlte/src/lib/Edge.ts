@@ -12,11 +12,6 @@ export class Edge {
         const diff = new Vector3().copy(v0).sub(v1)
         this.spherical = new Spherical().setFromVector3(diff)
 
-        console.log({
-            theta: radToDeg(this.spherical.theta),
-            phi: radToDeg(this.spherical.phi),
-        })
-
         this.length = diff.length()
     }
 
