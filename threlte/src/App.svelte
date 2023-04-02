@@ -3,7 +3,9 @@
 </script>
 
 
-<Scene />
+<main class="h-full w-full bg-neutral-800">
+  <Scene />
+</main>
 
 
 <style>
