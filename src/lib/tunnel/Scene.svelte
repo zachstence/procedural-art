@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Canvas, OrbitControls, T } from '@threlte/core'
   import { writable } from 'svelte/store';
-    import { BufferGeometry, DoubleSide, LineBasicMaterial, MeshStandardMaterial, Points, QuadraticBezierCurve3, TorusKnotGeometry, TubeGeometry, Vector3 } from 'three';
+    import { BufferGeometry, DoubleSide, LineBasicMaterial, MeshStandardMaterial, Plane, PlaneHelper, Points, QuadraticBezierCurve3, SphereGeometry, TorusKnotGeometry, TubeGeometry, Vector2, Vector3, WireframeGeometry } from 'three';
 
     const TUNNEL_RADIUS = 0.5
 
@@ -13,45 +13,32 @@
         new Vector3(2, 2, 10),
     )
 
-    const tubeGeometry = new TubeGeometry(curve, 15, TUNNEL_RADIUS, 50, false)
+    const tubeGeometry = new TubeGeometry(curve, 10, TUNNEL_RADIUS, 10, false)
 
-    const curvePos = writable(0)
-    $: cameraPos = curve.getPointAt($curvePos)
-    $: cameraTarget = curve.getPoint($curvePos + 0.1)
+    const pos = writable(0.5)
+    $: posVector = curve.getPointAt($pos)
+    $: tangentVector = curve.getTangentAt($pos)
+    $: circlePlane = new Plane(new Vector3().copy(tangentVector).add(posVector))
+
+    $: console.log({tangentVector, circlePlane})
 </script>
 
 
-<div class="flex flex-col text-white">
-    <label>
-        Curve Position
-        <input class="w-96" type="range" min="0" max="1" step="0.01" bind:value={$curvePos} />
-        {$curvePos}
-    </label>
-</div>
+<input class="w-96" type="range" min="0" max="1" step="0.01" bind:value={$pos} />
 
 
 <Canvas>
-    <T.PerspectiveCamera makeDefault position={[cameraPos.x, cameraPos.y, cameraPos.z]} fov={24}>
-        <OrbitControls target={{ x: cameraTarget.x, y: cameraTarget.y, z: cameraTarget.z}} />
+    <T.PerspectiveCamera makeDefault position={[0, 0, 0]} fov={24}>
+        <OrbitControls target={{ x: 0, y: 0, z: 1 }} />
     </T.PerspectiveCamera>
-
-    <!-- Axes -->
-    <T.Group>
-        <T.Line args={[
-            new BufferGeometry().setFromPoints([new Vector3(0, 0, 0), new Vector3(1, 0, 0)]),
-            new LineBasicMaterial({ color: 'red' }),
-        ]} />
-        <T.Line args={[
-            new BufferGeometry().setFromPoints([new Vector3(0, 0, 0), new Vector3(0, 1, 0)]),
-            new LineBasicMaterial({ color: 'green' }),
-        ]} />
-        <T.Line args={[
-            new BufferGeometry().setFromPoints([new Vector3(0, 0, 0), new Vector3(0, 0, 1)]),
-            new LineBasicMaterial({ color: 'blue' }),
-        ]} />
-    </T.Group>
 
     <T.AmbientLight intensity={1} />
 
     <T.Mesh args={[tubeGeometry, wireframeMaterial]} />
+
+    <T.Line args={[new BufferGeometry().setFromPoints(curve.getPoints(20)), new LineBasicMaterial({ color: "white" })]} />
+
+    <T.Group position.x={posVector.x} position.y={posVector.y} position.z={posVector.z}>
+        <T.PlaneHelper args={[circlePlane]} />
+    </T.Group>
 </Canvas>
