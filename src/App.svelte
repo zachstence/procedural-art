@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Scene } from "./lib/hypercube";
+  import { Scene } from "./lib/tunnel";
 </script>
 
 
