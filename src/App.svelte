@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Scene from "./lib/Scene.svelte";
+  import { Scene } from "./lib/hypercube";
 </script>
 
 
